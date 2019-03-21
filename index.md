@@ -17,3 +17,9 @@ I would ike to use finalfusion embeddings in:
 
 * [Rust](https://docs.rs/finalfusion)
 * [Python](python)
+
+# Specification
+
+If you are interesed in implementing your own library for the
+finalfusion format, please see [version 0](spec) of the finalfusion
+specification.
