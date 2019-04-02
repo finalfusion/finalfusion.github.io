@@ -16,8 +16,8 @@ crate.
 ## Installation
 
 The finalfusion module is
-[available](https://pypi.org/project/finalfusion/#files) on PyPi for some
-platforms. You can use `pip` to install the module:
+[available](https://pypi.org/project/finalfusion/#files) on PyPi for
+Linux and Windows. You can use `pip` to install the module:
 
 ~~~shell
 $ pip install --upgrade finalfusion
