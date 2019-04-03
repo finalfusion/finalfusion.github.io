@@ -11,9 +11,11 @@ We also provide
 [finalfrontier](https://github.com/finalfusion/finalfrontier) to train
 finalfusion embeddings.
 
-# Pretrained embeddings
+# Getting embeddings
 
-We provide a growing set of [pretrained](pretrained) embeddings.
+* We provide a growing set of [pretrained](pretrained) embeddings.
+* You can use [finalfrontier](finalfrontier) to train your own
+  finalfusion embeddings.
 
 # Libraries
 
