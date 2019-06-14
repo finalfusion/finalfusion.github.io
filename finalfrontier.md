@@ -9,6 +9,8 @@ embeddings. finalfrontier currently has the following features:
 * Models:
   - skip-gram (Mikolov et al., 2013)
   - structured skip-gram (Ling et al., 2015)
+  - directional skip-gram (Song et al., 2018)
+  - dependency (Levy and Goldberg, 2014)
 
 ## Getting finalfrontier
 
@@ -19,13 +21,15 @@ instructions](finalfrontier-build).
 
 ## Quickstart
 
+### Skip-gram models
+
 Train a model with 300-dimensional word embeddings, the structured skip-gram
 model, discarding words that occur fewer than 10 times, in 10 epochs, using
 16 threads:
 
 
 ~~~bash
-$ ff-train --dims 300 --model structgram --epochs 10 --mincount 10 \
+$ ff-train-skipgram --dims 300 --model structgram --epochs 10 --mincount 10 \
   --threads 16 corpus.txt corpus-embeddings.fifu
 ~~~
 
@@ -38,3 +42,15 @@ query the embeddings with
 ~~~ bash
 $ ff-similar corpus-embeddings.fifu
 ~~~
+
+### Dependency embeddings
+
+Train embeddings with dimensionality 200 on `corpus.conll` using the dependency
+model from contexts with depth up to 2:
+
+~~~bash
+$ ff-train-deps --depth 2 --normalize --dims 200 \
+  corpus.conll dewiki-deps.bin
+~~~
+
+The input file should be in CoNLL-X format.
