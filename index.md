@@ -14,6 +14,11 @@ finalfusion embeddings.
 # Getting embeddings
 
 * We provide a growing set of [pretrained](pretrained) embeddings.
+* We also provide conversions of the fastText
+  [Wikipedia](http://www.sfs.uni-tuebingen.de/a3-public-data/finalfusion-fasttext/wiki/)
+  and [Common
+  Crawl](http://www.sfs.uni-tuebingen.de/a3-public-data/finalfusion-fasttext/cc/)
+  embeddings.
 * You can use [finalfrontier](finalfrontier) to train your own
   finalfusion embeddings.
 
