@@ -72,15 +72,15 @@ The chunk format is as follows:
 - Chunk data length: u64
 - Chunk data: n bytes
 
-### Vocab
+### Simple Vocab
 
-- Chunk identifier: 0
+- Chunk identifier: 1
 - Vocab length: u64 (`vocab_len`)
 - `vocab_len` times:
   - word length in bytes: u32 (`word_len`)
   - `word_len` times u8.
   
-### Subword vocab
+### Finalfusion subword vocab
 
 - Chunk identifier: 3
 - Minimum n-gram length: u32
@@ -91,10 +91,34 @@ The chunk format is as follows:
   - word length in bytes: u32 (`word_len`)
   - `word_len` times u8.
 
+### fastText subword vocab
+
+- Chunk identifier: 7
+- Minimum n-gram length: u32
+- Maximum n-gram length: u32
+- Number of buckets: u32
+- Vocab length: u64 (`vocab_len`)
+- `vocab_len` times:
+  - word length in bytes: u32 (`word_len`)
+  - `word_len` times u8.
+
+### Explicit n-gram vocab
+
+- Chunk identifier: 8
+- Minimum n-gram length: u32
+- Maximum n-gram length: u32
+- Vocab length: u64 (`vocab_len`)
+- `vocab_len` times:
+  - word length in bytes: u32 (`word_len`)
+  - `word_len` times u8.
+- N-gram vocab length: u64 (`n_ngrams`)
+- `n_ngrams` times:
+  - n-gram length in bytes: u32 (`ngram_len`)
+  - `ngram_len` times u8.
 
 ### Embedding matrix
 
-- Chunk identifier: 1
+- Chunk identifier: 2
 - Shape:
   - Rows: u64 (`n_rows`)
   - Cols: u32 (`n_cols`)
@@ -104,7 +128,7 @@ The chunk format is as follows:
 
 ### Quantized embedding matrix
 
-- Chunk identifier: 1
+- Chunk identifier: 4
 - Use projection (0 or 1): u32
 - Use norms (0 or 1): u32
 - Quantized embedding length: u32 (`quantized_len`)
@@ -118,3 +142,16 @@ The chunk format is as follows:
 - Subquantizers: `quantized_len` x (`reconstructed_len` / `quantized_len`) x `sizeof(quantized_type)`
 - Norms: `matrix_rows` x `sizeof(reconstructed_type)`
 - Quantized embedding matrix: `matrix_rows` x `quantized_len` x `sizeof(reconstructed_type)`
+
+### Metadata
+
+- Chunk identifier: 5
+- UTF8 encoded Metadata in TOML format: `chunk_data_len` times `u8`
+
+### NdNorms
+
+- Chunk identifier: 6
+- Number of norms: u64 (`n_norms`)
+- Data type: u32 (`data_type`)
+- Padding, such that data is at a multiple of `size_of::<data_type>()`.
+- Data: `n_norms` * `sizeof(data_type)`
