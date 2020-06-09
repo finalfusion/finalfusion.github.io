@@ -7,13 +7,13 @@ title: finalfusion Python module
 
 ## Introduction
 
-`finalfusion-python` is a Python module for reading, writing, and
-using *finalfusion* embeddings, but also offers methods to read
-and use fastText, word2vec and GloVe embeddings. This module is
-implemented in Rust as a wrapper around the 
-[finalfusion](https://docs.rs/finalfusion/) crate. 
+`finalfusion` is a Python package for reading, writing and using 
+[finalfusion](https://finalfusion.github.io) embeddings, but also
+supports other commonly used embeddings like fastText, GloVe and
+word2vec. 
 
-The Python module supports the same types of embeddings:
+The Python package supports the same types of embeddings as the
+[finalfusion-rust crate](https://docs.rs/finalfusion/):
 
 * Vocabulary:
   * No subwords
@@ -22,112 +22,140 @@ The Python module supports the same types of embeddings:
   * Array
   * Memory-mapped
   * Quantized
-* Format:
-  * finalfusion
-  * fastText
-  * word2vec
-  * GloVe
+* Norms
+* Metadata
 
 ## Installation
 
 The finalfusion module is
-[available](https://pypi.org/project/finalfusion/#files) on PyPi for
-Linux, Mac and Windows. You can use `pip` to install the module:
+[available](https://pypi.org/project/finalfusion/#files) on PyPi for Linux,
+Mac and Windows. You can use `pip` to install the module:
 
 ~~~shell
 $ pip install --upgrade finalfusion
 ~~~
 
-## Building from source
+## Installing from source
 
-finalfusion can also be built from source. This requires a Rust toolchain
-that is installed through rustup. First, you need `maturin`:
-
-~~~shell
-$ cargo install maturin
-~~~
-
-finalfusion currently requires a nightly version of Rust. You can use rustup
-to switch to a nightly build:
+Building from source depends on `Cython`. If you install the package using
+`pip`, you don't need to explicitly install the dependency since it is
+specified in `pyproject.toml`.
 
 ~~~shell
-# Use the nightly toolchain in the current directory.
-$ rustup override set nightly
+$ git clone https://github.com/finalfusion/finalfusion-python
+$ cd finalfusion-python
+$ pip install .
 ~~~
 
-Now you can build finalfusion-python wheels for Python versions that are
-detected by `maturin`:
+If you want to build wheels from source, `wheel` needs to be installed.
+It's then possible to build wheels through:
 
 ~~~shell
-$ maturin build --release
+$ python setup.py bdist_wheel
 ~~~
 
-The wheels are then in the `target/wheels` directory.
+The wheels can be found in `dist`.
 
-## Usage
+## Package Usage
 
-finalfusion embeddings can be loaded as follows:
+### Basic usage
 
 ~~~python
 import finalfusion
-# Loading embeddings in finalfusion format
-embeds = finalfusion.Embeddings("myembeddings.fifu")
+# loading from different formats
+w2v_embeds = finalfusion.load_word2vec("/path/to/w2v.bin")
+text_embeds = finalfusion.load_text("/path/to/embeds.txt")
+text_dims_embeds = finalfusion.load_text_dims("/path/to/embeds.dims.txt")
+fasttext_embeds = finalfusion.load_fasttext("/path/to/fasttext.bin")
+fifu_embeds = finalfusion.load_finalfusion("/path/to/embeddings.fifu")
 
-# Or if you want to memory-map the embedding matrix:
-embeds = finalfusion.Embeddings("myembeddings.fifu", mmap=True)
+# serialization to formats works similarly
+finalfusion.compat.write_word2vec("to_word2vec.bin", fifu_embeds)
 
-# fastText format
-embeds = finalfusion.Embeddings.read_fasttext("myembeddings.bin")
+# embedding lookup
+embedding = fifu_embeds["Test"]
 
-# word2vec format
-embeds = finalfusion.Embeddings.read_word2vec("myembeddings.w2v")
+# reading an embedding into a buffer
+import numpy as np
+buffer = np.zeros(fifu_embeds.storage.shape[1], dtype=np.float32)
+fifu_embeds.embedding("Test", out=buffer)
+
+# similarity and analogy query
+sim_query = fifu_embeds.word_similarity("Test")
+analogy_query = fifu_embeds.analogy("A", "B", "C")
+
+# accessing the vocab and printing the first 10 words
+vocab = fifu_embeds.vocab
+print(vocab.words[:10])
+
+# SubwordVocabs give access to the subword indexer:
+subword_indexer = vocab.subword_indexer
+print(subword_indexer.subword_indices("Test", with_ngrams=True))
+
+# accessing the storage and calculate its dot product with an embedding
+res = embedding.dot(fifu_embeds.storage)
+
+# printing metadata
+print(fifu_embeds.metadata) 
 ~~~
 
-You can then compute an embedding, perform similarity queries, or analogy
-queries:
+### Beyond Embeddings
 
-~~~python
-e = embeds.embedding("Tübingen")
-# default similarity query for "Tübingen"
-embeds.word_similarity("Tübingen")
+~~~Python
+# load only a vocab from a finalfusion file
+from finalfusion import load_vocab
+vocab = load_vocab("/path/to/finalfusion_file.fifu")
 
-# similarity query based on a vector, returning the closest embedding to
-# the input vector, skipping "Tübingen"
-embeds.embeddings_similarity(e, skip={"Tübingen"})
+# serialize vocab to single file
+vocab.write("/path/to/vocab_file.fifu.voc")
 
-# default analogy query
-embeds.analogy("Berlin", "Deutschland", "Amsterdam")
-
-# analogy query allowing "Deutschland" as answer
-embeds.analogy("Berlin", "Deutschland", "Amsterdam", mask=(True,False,True))
+# more specific loading functions exist
+from finalfusion.vocab import load_finalfusion_bucket_vocab
+fifu_bucket_vocab = load_finalfusion_bucket_vocab("/path/to/vocab_file.fifu.voc")
 ~~~
 
-If you want to operate directly on the full embedding matrix, you can
-get a copy of this matrix through:
-~~~python
-# get copy of embedding matrix, changes to this won't touch the original matrix
-e.matrix_copy()
+The package supports loading and writing all `finalfusion` chunks this way.
+This is only supported by the Python package, reading will fail with e.g.
+the `finalfusion-rust`.
+
+## Scripts
+
+`finalfusion` also includes a conversion script `ffp-convert` to convert
+between the supported formats.
+~~~shell
+# convert from fastText format to finalfusion
+$ ffp-convert -f fasttext fasttext.bin -t finalfusion embeddings.fifu
 ~~~
 
-Finally access to the vocabulary is provided through:
-~~~python
-v = e.vocab()
-# get a list of indices associated with "Tübingen"
-v.item_to_indices("Tübingen")
+`ffp-bucket-to-explicit` can be used to convert bucket embeddings to embeddings
+with an explicit ngram lookup.
+~~~shell
+# convert finalfusion bucket embeddings to explicit
+$ ffp-bucket-to-explicit -f finalfusion embeddings.fifu explicit.fifu
+~~~ 
 
-# get a list of `(ngram, index)` tuples for "Tübingen"
-v.ngram_indices("Tübingen")
-
-# get a list of subword indices for "Tübingen"
-v.subword_indices("Tübingen")
+`ffp-select` generates new embedding files based on some embeddings and a word
+list. Using `ffp-select` with embeddings with a simple vocab results in a
+subset of the original embeddings. With subword embeddings, vectors for unknown
+words in the word list are computed and added to the new embeddings. The
+resulting embeddings **cannot** provide representations for OOV words anymore.
+The new vocabulary covers only the words in the word list.
+~~~shell
+$ ffp-select large-embeddings.fifu subset-embeddings.fifu words.txt
 ~~~
 
-More usage examples can be found in the
-[examples](https://github.com/danieldk/finalfusion-python/tree/master/examples)
-directory.
+Finally, the package comes with `ffp-similar` and `ffp-analogy` to do
+analogy and similarity queries.
+~~~shell
+# get the 5 nearest neighbours of "Tübingen"
+$ echo Tübingen | ffp-similar embeddings.fifu
+# get the 5 top answers for "Tübingen" is to "Stuttgart" like "Heidelberg" to...
+$ echo Tübingen Stuttgart Heidelberg | ffp-analogy embeddings.fifu
+~~~
 
 ## Where to go from here
 
+  * [documentation](https://finalfusion-python.readthedocs.io/en/latest)
   * Train your own embeddings with
     [finalfrontier](https://github.com/finalfusion/finalfrontier).
   * Download some [pretrained embeddings](pretrained).
