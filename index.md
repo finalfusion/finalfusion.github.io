@@ -1,4 +1,11 @@
-# Introduction
+---
+title: Introduction to finalfusion
+nav_order: 0
+---
+
+# Introduction to finalfusion
+
+## Features
 
 finalfusion is a file format for word embeddings and an associated set
 of libraries and utilities. The file format has the following features:
@@ -11,7 +18,7 @@ We also provide
 [finalfrontier](https://github.com/finalfusion/finalfrontier) to train
 finalfusion embeddings.
 
-# Getting embeddings
+## Getting embeddings
 
 * We provide a growing set of [pretrained](pretrained) embeddings.
 * We also provide conversions of the fastText
@@ -22,20 +29,20 @@ finalfusion embeddings.
 * You can use [finalfrontier](finalfrontier) to train your own
   finalfusion embeddings.
 
-# Libraries
+## Libraries
 
 finalfusion libraries are available for:
 
 * [Rust](https://docs.rs/finalfusion)
 * [Python](python)
 
-# Specification
+## Specification
 
 If you are interesed in implementing your own library for the
 finalfusion format, please see [version 0](spec) of the finalfusion
 specification.
 
-# Acknowledgements
+## Acknowledgements
 
 finalfusion and finalfrontier were developed by [Daniël de
 Kok](https://danieldk.eu) and [Sebastian

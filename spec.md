@@ -1,8 +1,11 @@
 ---
-title: The finalfusion format v0
+title: finalfusion specification
+nav_order: 30
 ---
 
-# The finalfusion specification v0
+# finalfusion specification
+
+**Version 0**
 
 ## Goals
 

@@ -1,3 +1,10 @@
+---
+title: Training embeddings
+nav_order: 10
+---
+
+# Training embeddings
+
 ## finalfrontier
 
 finalfrontier is a program for training [finalfusion](/) word
@@ -17,7 +24,7 @@ embeddings. finalfrontier currently has the following features:
 We provide precompiled [finalfrontier
 releases](https://github.com/finalfusion/finalfrontier/releases) for
 Linux and macOS. If you use another platform, follow the [build
-instructions](finalfrontier-build).
+instructions](https://github.com/finalfusion/finalfrontier/blob/master/docs/INSTALL.md).
 
 ## Quickstart
 

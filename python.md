@@ -1,6 +1,7 @@
 ---
 layout: default
-title: finalfusion Python module
+title: Python module
+nav_order: 30
 ---
 
 # Python module

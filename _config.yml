@@ -2,4 +2,12 @@ name: finalfusion
 title: finalfusion
 description: finalfusion embeddings format and libraries
 url: "https://finalfusion.github.io"
-theme: jekyll-theme-architect
+remote_theme: carlosperate/jekyll-theme-rtd
+
+# Theme settings
+edit_on_github: true
+repo_url: "https://github.com/finalfusion/finalfusion.github.io"
+sticky_navigation: true
+prev_next_buttons_location: bottom
+search_enabled: false
+hljs_style: github-gist

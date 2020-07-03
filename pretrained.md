@@ -1,3 +1,10 @@
+---
+title: Pretrained embeddings
+nav_order: 20
+---
+
+# Pretrained embeddings
+
 The pretrained embeddings are trained using
 [finalfrontier](finalfrontier).
 
