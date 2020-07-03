@@ -7,8 +7,8 @@ nav_order: 10
 
 ## finalfrontier
 
-finalfrontier is a program for training [finalfusion](/) word
-embeddings. finalfrontier currently has the following features:
+finalfrontier is a program for training word embeddings. finalfrontier
+currently has the following features:
 
 * Noise contrastive estimation (Gutmann and Hyvärinen, 2012)
 * Subword representations (Bojanowski et al., 2016)
@@ -18,12 +18,18 @@ embeddings. finalfrontier currently has the following features:
   - structured skip-gram (Ling et al., 2015)
   - directional skip-gram (Song et al., 2018)
   - dependency (Levy and Goldberg, 2014)
+* Output formats:
+  - [finalfusion](/)
+  - fastText
+  - word2vec binary
+  - word2vec text
+  - GloVe
 
 ## Getting finalfrontier
 
 We provide precompiled [finalfrontier
 releases](https://github.com/finalfusion/finalfrontier/releases) for
-Linux and macOS. If you use another platform, follow the [build
+Linux. If you use another platform, follow the [build
 instructions](https://github.com/finalfusion/finalfrontier/blob/master/docs/INSTALL.md).
 
 ## Quickstart
@@ -36,7 +42,7 @@ model, discarding words that occur fewer than 10 times, in 10 epochs, using
 
 
 ~~~bash
-$ ff-train-skipgram --dims 300 --model structgram --epochs 10 --mincount 10 \
+$ finalfrontier skipgram --dims 300 --model structgram --epochs 10 --mincount 10 \
   --threads 16 corpus.txt corpus-embeddings.fifu
 ~~~
 
@@ -47,17 +53,17 @@ query the embeddings with
 `finalfusion-utils`:
 
 ~~~ bash
-$ ff-similar corpus-embeddings.fifu
+$ finalfusion similar corpus-embeddings.fifu
 ~~~
 
 ### Dependency embeddings
 
-Train embeddings with dimensionality 200 on `corpus.conll` using the dependency
-model from contexts with depth up to 2:
+Train embeddings with dimensionality 200 on `corpus.conll` using the
+dependency model from contexts with depth up to 2:
 
 ~~~bash
-$ ff-train-deps --depth 2 --normalize --dims 200 \
-  corpus.conll dewiki-deps.bin
+$ finalfrontier deps --dependency-depth 2 --normalize-context \
+  --dims 200 corpus.conll dewiki-deps.bin
 ~~~
 
-The input file should be in CoNLL-X format.
+The input file should be in CoNLL-U format.
